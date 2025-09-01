@@ -3,7 +3,7 @@ URL Shortener Microservice
 
 This is a full-stack application that provides URL shortening functionality, along with analytics for the shortened links. The project is built following a microservice architecture and integrates a custom logging middleware.
 
-Features ✨
+Features 
 ----------
 
 ### Backend
@@ -32,7 +32,7 @@ Features ✨
 *   **Professional UI:** Utilizes Material UI for a clean and responsive design.
     
 
-Technology Stack 💻
+Technology Stack 
 -------------------
 
 ### Backend
@@ -63,31 +63,7 @@ Technology Stack 💻
 *   **axios**: For making API calls to the backend microservice.
     
 
-Prerequisites 🛠️
------------------
-
-*   **Node.js**: [Download and Install Node.js](https://nodejs.org/)
-    
-*   **MongoDB**: [Download and Install MongoDB Community Server](https://www.mongodb.com/try/download/community)
-    
-
-Installation & Setup 🚀
------------------------
-
-1.  Bashgit clone https://github.com//.gitcd
-    
-2.  Bashcd "Backend Test Submission"npm installCreate a .env file in this directory and add your MongoDB URI and access token.Code snippetMONGODB\_URI=mongodb://localhost:27017/url-shortenerACCESS\_TOKEN=
-    
-3.  Bashcd ../"Frontend Test Submission"npm installCreate a src/logger.ts file with your access token.TypeScript// In src/logger.tsconst BACKEND\_URL = 'http://localhost:5000';const ACCESS\_TOKEN = '';// ... rest of the code
-    
-4.  **Run the Application:**
-    
-    *   Bashcd "Backend Test Submission"npm run dev
-        
-    *   Bashcd "Frontend Test Submission"npm run dev
-        
-
-Usage 💡
+Usage 
 --------
 
 Your application will be running on http://localhost:5173.
@@ -106,7 +82,7 @@ Your application will be running on http://localhost:5173.
 *   The application will display detailed click data, including the total clicks.
     
 
-Folder Structure 📁
+Folder Structure 
 -------------------
 
 The project is organized into the three mandatory folders for the full-stack track.
@@ -118,5 +94,12 @@ The project is organized into the three mandatory folders for the full-stack tra
 *   Logging Middleware: Contains the reusable Log() function.
     
 
-Screenshots 📸
+Screenshots 
 --------------
+
+<img width="1908" height="965" alt="Screenshot 2025-09-01 122904" src="https://github.com/user-attachments/assets/a8c365e4-e363-438d-aaab-d5539764babc" />
+<img width="1909" height="996" alt="Postman-CreateShortUrl png" src="https://github.com/user-attachments/assets/2183852d-f878-4ee4-80cc-9ccc172abe0a" />
+<img width="1907" height="1078" alt="Postman-GetStats png" src="https://github.com/user-attachments/assets/1027139e-59cd-49be-a3ab-c139dfb1698c" />
+<img width="1915" height="1023" alt="Backend-Log-Success png" src="https://github.com/user-attachments/assets/8c242e13-5851-43ec-b328-974735d0416d" />
+
+
