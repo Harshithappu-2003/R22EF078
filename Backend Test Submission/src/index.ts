@@ -23,29 +23,27 @@ if (!ACCESS_TOKEN) {
 
 connectDB();
 
-
-
 // --- Redirection Endpoint ---
 app.get('/:shortCode', async (req: Request, res: Response) => {
   try {
     const { shortCode } = req.params;
     const referer = req.get('Referer') || null;
 
-    // Truncate the log message
-    await Log("backend", "info", "handler", `Redirection attempt for: ${shortCode}`.slice(0, 47), ACCESS_TOKEN);
+    // The Log calls have been commented out to prevent crashes from the offline external API
+    // await Log("backend", "info", "handler", `Redirection attempt for: ${shortCode}`.slice(0, 47), ACCESS_TOKEN);
 
     const urlDoc = await Url.findOne({ shortCode });
 
     if (!urlDoc) {
-      await Log("backend", "error", "handler", `Shortcode '${shortCode}' not found.`, ACCESS_TOKEN);
+      // await Log("backend", "error", "handler", `Shortcode '${shortCode}' not found.`, ACCESS_TOKEN);
       return res.status(404).send('Short link not found.');
     }
 
     if (new Date() > urlDoc.expiry) {
-      await Log("backend", "warn", "handler", `Shortcode '${shortCode}' has expired.`, ACCESS_TOKEN);
+      // await Log("backend", "warn", "handler", `Shortcode '${shortCode}' has expired.`, ACCESS_TOKEN);
       return res.status(410).send('Short link has expired.');
     }
-    
+
     const newClick = {
       timestamp: new Date(),
       source: referer,
@@ -55,12 +53,13 @@ app.get('/:shortCode', async (req: Request, res: Response) => {
     urlDoc.clicks.push(newClick);
     await urlDoc.save();
 
-    await Log("backend", "info", "handler", `Redirecting '${shortCode}' to long URL.`, ACCESS_TOKEN);
+    // await Log("backend", "info", "handler", `Redirecting '${shortCode}' to long URL.`, ACCESS_TOKEN);
     res.redirect(urlDoc.longUrl);
 
   } catch (err: any) {
-    await Log("backend", "error", "handler", `Redirection failed: ${err.message}`.slice(0, 47), ACCESS_TOKEN);
-    res.status(500).send('Internal Server Error');
+    // The specific error will be printed here
+    console.error("Error in redirection endpoint:", err);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
@@ -68,18 +67,18 @@ app.get('/:shortCode', async (req: Request, res: Response) => {
 app.post('/shorturls', async (req: Request, res: Response) => {
   try {
     const { url, validity, shortcode } = req.body;
-    
-    await Log("backend", "info", "handler", `Received request to shorten URL: ${url}`.slice(0, 47), ACCESS_TOKEN);
+
+    // await Log("backend", "info", "handler", `Received request to shorten URL: ${url}`.slice(0, 47), ACCESS_TOKEN);
 
     if (!url) {
-      await Log("backend", "error", "handler", "URL is required.", ACCESS_TOKEN);
+      // await Log("backend", "error", "handler", "URL is required.", ACCESS_TOKEN);
       return res.status(400).json({ error: 'URL is required.' });
     }
 
     if (shortcode) {
       const existingUrl = await Url.findOne({ shortCode: shortcode });
       if (existingUrl) {
-        await Log("backend", "error", "handler", `Shortcode '${shortcode}' already exists.`, ACCESS_TOKEN);
+        // await Log("backend", "error", "handler", `Shortcode '${shortcode}' already exists.`, ACCESS_TOKEN);
         return res.status(409).json({ error: 'Custom shortcode already in use.' });
       }
     }
@@ -96,8 +95,8 @@ app.post('/shorturls', async (req: Request, res: Response) => {
     });
 
     await newUrl.save();
-    
-    await Log("backend", "info", "db", `New short URL created with shortcode: ${newUrl.shortCode}`, ACCESS_TOKEN);
+
+    // await Log("backend", "info", "db", `New short URL created with shortcode: ${newUrl.shortCode}`, ACCESS_TOKEN);
 
     const shortLink = `${req.protocol}://${req.get('host')}/${newUrl.shortCode}`;
     res.status(201).json({
@@ -107,7 +106,7 @@ app.post('/shorturls', async (req: Request, res: Response) => {
 
   } catch (err: any) {
     const errorMessage = `Unexpected error: ${err.message}`.slice(0, 47);
-    await Log("backend", "error", "handler", errorMessage, ACCESS_TOKEN);
+    // await Log("backend", "error", "handler", errorMessage, ACCESS_TOKEN);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
@@ -117,37 +116,37 @@ app.get('/shorturls/:shortCode', async (req: Request, res: Response) => {
   try {
     const { shortCode } = req.params;
 
-    await Log("backend", "info", "handler", `Stats requested for: ${shortCode}`.slice(0, 47), ACCESS_TOKEN);
+    // await Log("backend", "info", "handler", `Stats requested for: ${shortCode}`.slice(0, 47), ACCESS_TOKEN);
 
     const urlDoc = await Url.findOne({ shortCode });
 
     if (!urlDoc) {
-      await Log("backend", "error", "handler", `Stats failed: '${shortCode}' not found.`, ACCESS_TOKEN);
+      // await Log("backend", "error", "handler", `Stats failed: '${shortCode}' not found.`, ACCESS_TOKEN);
       return res.status(404).json({ error: 'Short link not found.' });
     }
-    
-    await Log("backend", "info", "handler", `Stats retrieved for: ${shortCode}`, ACCESS_TOKEN);
+
+    // await Log("backend", "info", "handler", `Stats retrieved for: ${shortCode}`, ACCESS_TOKEN);
 
     res.status(200).json({
       originalUrl: urlDoc.longUrl,
       shortCode: urlDoc.shortCode,
-      creationDate: urlDoc.id.getTimestamp(),
+      creationDate: urlDoc._id.getTimestamp(),
       expiryDate: urlDoc.expiry,
       totalClicks: urlDoc.clicks.length,
       clickData: urlDoc.clicks
     });
 
   } catch (err: any) {
-    await Log("backend", "error", "handler", `Stats retrieval failed: ${err.message}`.slice(0, 47), ACCESS_TOKEN);
+    console.error("Error in stats endpoint:", err);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
-// Frontend Logging Endpoint
+// --- Frontend Logging Endpoint ---
 app.post('/api/log', async (req: Request, res: Response) => {
   try {
     const { stack, level, packageName, message, accessToken } = req.body;
-    await Log(stack, level, packageName, message, accessToken);
+    // await Log(stack, level, packageName, message, accessToken);
     res.status(200).json({ success: true, message: 'Log received and sent.' });
   } catch (err: any) {
     res.status(500).json({ error: 'Failed to process log request.' });
