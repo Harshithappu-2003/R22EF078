@@ -62,7 +62,12 @@ app.get('/:shortCode', async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-
+// input validation 
+// Adding compresnhive url validation 
+// implementing the rate limit or the auth just tp prvent the error of end point 
+// handling of all the edge cases , eg:- duplicate url or epired shortcodes 
+// ading more descriptive error messages for better debuging and the client feedback
+// minimum validation 
 // --- URL Shortener Endpoint ---
 app.post('/shorturls', async (req: Request, res: Response) => {
   try {
@@ -82,7 +87,12 @@ app.post('/shorturls', async (req: Request, res: Response) => {
         return res.status(409).json({ error: 'Custom shortcode already in use.' });
       }
     }
-
+// mathematical calculation
+// unique shortcode is calculated as :- total combinations = (number of possible charcters) ^ (length of the code)
+// eg let charset = 62;
+// let length = 7;
+// let totalCombinations = Math.pow(charset, length); it's like 62^7
+// console.log
     const validityInMinutes = validity || 30;
     const expiryDate = new Date();
     expiryDate.setMinutes(expiryDate.getMinutes() + validityInMinutes);
